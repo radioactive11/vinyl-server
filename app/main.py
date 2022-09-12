@@ -1,5 +1,9 @@
-from fastapi import Fastapi
+from fastapi import FastAPI
 
-app = Fastapi(title="my-sample-app")
+from app.api.v1.api import api_router
+
+app = FastAPI(title="vinyl")
+
+app.include_router(api_router)
 
 
