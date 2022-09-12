@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.api import deps
+from app.crud.artist_crud import artists
 
 from sqlalchemy.orm import Session
 
@@ -11,4 +12,6 @@ router = APIRouter()
 def search_artist(
     q: str, limit: int = 10, offset: int = 0, db: Session = Depends(deps.get_db)
 ):
-    return {"search": "working"}
+
+    items = artists.search_artist(db, q)
+    return items
