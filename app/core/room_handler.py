@@ -5,12 +5,18 @@ class Room:
     # All room related operations
     def add_member(self, room_id: str, user_id: str, redis_client: Redis):
         redis_client.lpush(f"room:{room_id}:members", user_id)
-        redis_client.zadd(f"room:{room_id}:leaderboard", user_id, 0)
+        redis_client.zadd(f"room:{room_id}:leaderboard", {user_id: 0})
 
     def update_score(self, scores: dict, room_id: str, redis_client: Redis):
         for player in scores.items():
             user_id, score_incr = player
             redis_client.zincrby(f"room:{room_id}:leaderboard", score_incr, user_id)
+
+        updated_scores = redis_client.zrange(
+            f"room:{room_id}:leaderboard", 0, -1, withscores=True
+        )
+
+        return updated_scores
 
     def delete(self, room_id: str, redis_client: Redis):
         """Delete a room
@@ -50,7 +56,7 @@ class Room:
 
         redis_client.set(f"room:{room_id}:admin", admin_id)
         redis_client.lpush(f"room:{room_id}:members", admin_id)
-        redis_client.zadd(f"room:{room_id}:leaderboard", admin_id, 0)
+        redis_client.zadd(f"room:{room_id}:leaderboard", {admin_id: 0})
 
         return True
 
