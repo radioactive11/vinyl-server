@@ -4,7 +4,7 @@ from fastapi import Header, Response, HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from app.db.sesison import SessionLocal
-
+from app.db.pool import RedisHandler
 
 import os
 import json
@@ -23,3 +23,15 @@ def get_db() -> Generator:
 
     finally:
         db.close()
+
+
+def get_redis():
+    try:
+        redis_client = RedisHandler().redis_connect()
+        yield redis_client
+
+    except Exception as e:
+        print(e)
+
+    finally:
+        redis_client.close()
