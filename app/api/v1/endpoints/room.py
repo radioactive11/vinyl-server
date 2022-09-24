@@ -1,10 +1,18 @@
 from email import message
+from urllib import request
 from redis import Redis
 from fastapi import APIRouter, Depends, Response, status
 
 from app.api import deps
 
-from app.schema.room import CreateRoom, DeleteRoom, UpdateScore, AddPlayer
+from app.schema.room import (
+    CreateRoom,
+    DeleteRoom,
+    RemovePlayer,
+    UpdateScore,
+    AddPlayer,
+    RemovePlayer,
+)
 from app.core.room_handler import room
 
 from sqlalchemy.orm import Session
@@ -49,6 +57,17 @@ def add_player(request_body: AddPlayer, redis_client: Redis = Depends(deps.get_r
     room.add_member(request_body.room_id, request_body.user_id, redis_client)
 
     return {"message": f"Added {request_body.user_id} to {request_body.room_id}"}
+
+
+@router.post("/remove_player")
+def remove_plater(
+    request_body: RemovePlayer, redis_client: Redis = Depends(deps.get_redis)
+):
+    updated_players = room.remove_player(
+        request_body.room_id, request_body.user_id, redis_client
+    )
+
+    return updated_players
 
 
 @router.put("/update_score")

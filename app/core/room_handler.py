@@ -32,6 +32,11 @@ class Room:
         )
         redis_client.setbit(f"room", room_id, 0)
 
+    def remove_player(self, room_id: str, user_id: str, redis_client: Redis):
+        redis_client.lrem(f"room:{room_id}:members", 0, user_id)
+
+        return redis_client.lrange(f"room:{room_id}:members", 0, -1)
+
     def create(self, admin_id: str, room_id: str, redis_client: Redis) -> bool:
         """
         Creates a new room
