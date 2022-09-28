@@ -1,5 +1,3 @@
-from email import message
-from urllib import request
 from redis import Redis
 from fastapi import APIRouter, Depends, Response, status
 

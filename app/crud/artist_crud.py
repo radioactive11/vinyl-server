@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
-from app.models.artist import Artists
+from models.artist import Artists
 
 
 class ArtistCRUD:
