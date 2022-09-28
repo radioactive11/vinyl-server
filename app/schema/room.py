@@ -15,6 +15,11 @@ class AddPlayer(BaseModel):
     room_id: str
 
 
+class RemovePlayer(BaseModel):
+    room_id: str
+    user_id: str
+
+
 class UpdateScore(BaseModel):
     room_id: str
     scores: dict
