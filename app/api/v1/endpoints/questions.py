@@ -28,9 +28,15 @@ def create_question(
 
 @router.post("/fetch")
 def fetch_questions(
-    request_body: FetchQuestions, redis_client: Redis = Depends(deps.get_redis)
+    request_body: FetchQuestions,
+    response: Response,
+    redis_client: Redis = Depends(deps.get_redis),
 ):
     questions = redis_client.get(f"room:{request_body.room_id}:questions")
+
+    if questions is None:
+        response.status_code = status.HTTP_204_NO_CONTENT
+        return {}
 
     questions_json = json.loads(questions)
 
