@@ -28,7 +28,7 @@ def create_question(
 
     redis_client.set(f"room:{request_body.room_id}:questions", json.dumps(questions))
 
-    return {"status": "ok"}
+    return {"questions": questions}
 
 
 @router.post("/check")
