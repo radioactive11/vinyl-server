@@ -8,3 +8,8 @@ class GenerateQuestions(BaseModel):
 
 class FetchQuestions(BaseModel):
     room_id: str
+
+
+class CheckAnswer(BaseModel):
+    question_id: str
+    answer: str

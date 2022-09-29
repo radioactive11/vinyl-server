@@ -5,7 +5,7 @@ from redis import Redis
 
 from app.api import deps
 from core.questions import QuestionGenerator
-from schema.questions import GenerateQuestions, FetchQuestions
+from schema.questions import GenerateQuestions, FetchQuestions, CheckAnswer
 
 import json
 
@@ -21,9 +21,27 @@ def create_question(
     qg = QuestionGenerator(db, request_body.track_ids)
     questions = qg.generate(10)
 
+    for question in questions:
+        track_id = question["question_id"]
+        track_name = question["name"]
+        redis_client.set(f"track_id:{track_id}", track_name)
+
     redis_client.set(f"room:{request_body.room_id}:questions", json.dumps(questions))
 
     return {"status": "ok"}
+
+
+@router.post("/check")
+def check_answer(request_body: CheckAnswer, redis_client=Depends(deps.get_redis)):
+    actual = redis_client.get(f"track_id:{request_body.question_id}")
+    if actual is None:
+        return {"result": "False"}
+
+    actual = actual.decode()
+    if actual.lower() == request_body.answer.lower():
+        return {"result": "True"}
+
+    return {"result": "False"}
 
 
 @router.post("/fetch")
