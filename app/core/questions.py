@@ -12,6 +12,7 @@ class QuestionGenerator:
         questions = []
 
         for item in self.__tracks:
+            track_id = item["track"]["id"]
             cluster_id = item["track"]["cluster_id"]
             content_id = item["track"]["content_id"]
 
@@ -19,7 +20,12 @@ class QuestionGenerator:
             name = item["track"]["name"]
             image = item["album"]["album_image"]
 
-            temp_dict = {"name": name, "image": image, "url": url}
+            temp_dict = {
+                "name": name,
+                "image": image,
+                "url": url,
+                "question_id": track_id,
+            }
             questions.append(temp_dict)
 
         return questions
