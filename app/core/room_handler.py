@@ -30,7 +30,7 @@ class Room:
             f"room:{room_id}:admin",
             f"room:{room_id}:leaderboard",
         )
-        redis_client.setbit(f"room", room_id, 0)
+        redis_client.setbit(f"room:{room_id}", 1, 0)
 
     def remove_player(self, room_id: str, user_id: str, redis_client: Redis):
         redis_client.lrem(f"room:{room_id}:members", 0, user_id)
@@ -52,12 +52,12 @@ class Room:
         Returns:
             bool: room creatation status
         """
-        room_exists = redis_client.getbit("room", room_id)
+        room_exists = redis_client.getbit(f"room:{room_id}", 1)
 
         if room_exists:
             return False
 
-        redis_client.setbit("room", room_id, 1)
+        redis_client.setbit(f"room:{room_id}", 1, 1)
 
         redis_client.set(f"room:{room_id}:admin", admin_id)
         redis_client.lpush(f"room:{room_id}:members", admin_id)
